@@ -6,6 +6,8 @@ import Divider from '@mui/material/Divider';
 import {useState} from "react";
 import {Coordinates, Location, Product, Person, RequestMessage} from "../model";
 import Button from "@mui/material/Button";
+import ProductLayout from "./ProductLayout";
+import ErrorLayout from "./ErrorLayout";
 
 const serverUrl: string = "api1/products";
 
@@ -29,7 +31,8 @@ export default function AddProduct() {
     const [locationY, setLocationY] = useState<string>("");
     const [locationName, setLocationName] = useState<string>("");
 
-
+    const [errorComponent, setErrorComponent] = useState<RequestMessage | undefined>(undefined);
+    const [productComponent, setProductComponent] = useState<Product | undefined>(undefined);
 
     const submitData = async (json: string) => {
         try {
@@ -44,21 +47,23 @@ export default function AddProduct() {
                 if (response.ok) {
                     const responseData = response.json();
                     responseData.then(value => {
-                        alert(JSON.stringify(value as Product))
+                        setProductComponent(value as Product);
                     })
                 } else {
                     const responseData = response.json();
                     responseData.then(value => {
-                        alert(JSON.stringify(value as RequestMessage))
+                        setErrorComponent(value as RequestMessage);
                     })
                 }
             });
         } catch (error) {
-            alert("Error sending data: " + error);
+            setErrorComponent(new RequestMessage(504, "Error sending data: " + error));
         }
     };
 
     const handleSubmit = () => {
+        setProductComponent(undefined);
+        setErrorComponent(undefined);
         let coordinates: (Coordinates | undefined);
         if (coordinateX !== "" || coordinateY !== "") {
             coordinates = new Coordinates(
@@ -147,6 +152,14 @@ export default function AddProduct() {
                     </Stack>
                 </Stack>
                 <Button onClick={handleSubmit} variant="contained">Add</Button>
+                {errorComponent !== undefined && (
+                    <ErrorLayout requestMessage={errorComponent}/>
+                )}
+                {productComponent !== undefined && (
+                    <ProductLayout product={productComponent}/>
+                )}
+                <Divider color={"white"}/>
+                <Divider/>
             </Stack>
         </Box>
     );

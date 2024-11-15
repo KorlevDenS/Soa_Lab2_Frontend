@@ -8,6 +8,11 @@ import Toolbar from '@mui/material/Toolbar';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
+import {Product, RequestMessage} from "../../model";
+import ErrorLayout from "../ErrorLayout";
+import Grid from '@mui/material/Grid2';
+import ProductLayout from "../ProductLayout";
+import Button from "@mui/material/Button";
 
 const drawerWidth = 350;
 
@@ -51,7 +56,40 @@ interface ProductsProps {
 
 export default function Products({open, handleDrawerChange}: ProductsProps) {
 
+    const [products, setProducts] = useState<Product[]>([]);
+    const [errorComponent, setErrorComponent] = useState<RequestMessage | undefined>(undefined);
 
+    const getProducts = async () => {
+        try {
+            await fetch("api1/products", {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            }).then(response => {
+                if (response.ok) {
+                    const data = response.json();
+                    let productsArray: Product[];
+                    data.then(value => {productsArray = value as Product[]})
+                        .then(() => setProducts(productsArray));
+                } else {
+                    const responseData = response.json();
+                    responseData.then(value => {
+                        setErrorComponent(value as RequestMessage);
+                    })
+                }
+            });
+        } catch (error) {
+            setErrorComponent(new RequestMessage(504, "Error sending data: " + error));
+        }
+    };
+
+    const handleGetProducts = () => {
+        setProducts([]);
+        setErrorComponent(undefined);
+        getProducts().then(() => {});
+    };
 
     return (
         <Box className="Products" sx={{display: 'flex'}}>
@@ -92,10 +130,20 @@ export default function Products({open, handleDrawerChange}: ProductsProps) {
                 </DrawerHeader>
                 <Divider/>
                 Something to filter
+                <Button onClick={handleGetProducts}>Find products</Button>
             </MuiDrawer>
             <Main open={open}>
                 <Box>
-                    Products
+                    {errorComponent !== undefined && (
+                        <ErrorLayout requestMessage={errorComponent}/>
+                    )}
+                    <Grid container justifyContent={"space-evenly"} spacing={2}>
+                        {products.map((product) => (
+                            <Grid key={product.id}>
+                                <ProductLayout product={product} />
+                            </Grid>
+                        ))}
+                    </Grid>
                 </Box>
             </Main>
         </Box>
