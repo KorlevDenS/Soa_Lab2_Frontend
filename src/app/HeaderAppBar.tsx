@@ -78,7 +78,7 @@ export default function HeaderAppBar({open, handleDrawerChange}: HeaderAppBarPro
                             sx={{ my: 2, color: 'white', display: 'block' }}>
                         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                             <AddIcon fontSize={"small"} sx={{ display: { xs: 'none', md: 'flex' }, mr: 0.5}} />
-                            Add product
+                            CRUD
                         </Box>
                     </Button>
                 </Toolbar>
