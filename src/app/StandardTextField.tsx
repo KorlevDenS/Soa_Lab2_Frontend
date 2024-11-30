@@ -3,6 +3,7 @@ import React from "react";
 
 interface StandardTextFieldProps {
     label?: string;
+    value?: string;
     helperText?: string;
     type?: string;
     onChange?: (value: string) => void;
@@ -10,6 +11,7 @@ interface StandardTextFieldProps {
 
 const defaultProps: StandardTextFieldProps = {
     label: "Your text",
+    value: "",
     helperText: "",
     type: "",
 }
@@ -17,6 +19,7 @@ const defaultProps: StandardTextFieldProps = {
 const StandardTextField: React.FC<StandardTextFieldProps> = (props: StandardTextFieldProps) => (
     <TextField
         label={props.label === undefined ? defaultProps.label : props.label}
+        value={props.value}
         onChange={(e) => {
             if (props.onChange !== undefined) {
                 props.onChange(e.target.value);

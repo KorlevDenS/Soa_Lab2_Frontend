@@ -4,16 +4,18 @@ module.exports = function(app) {
     app.use(
         '/api1', // Путь для первого прокси
         createProxyMiddleware({
-            target: 'http://localhost:8177', // Адрес первого сервера
+            target: 'https://localhost:8177', // Адрес первого сервера
             changeOrigin: true,
+            secure: false,
         })
     );
 
     app.use(
         '/api2', // Путь для второго прокси
         createProxyMiddleware({
-            target: 'http://localhost:8080', // Адрес второго сервера
+            target: 'https://localhost:8181/managementservice-1.0-SNAPSHOT', // Адрес второго сервера
             changeOrigin: true,
+            secure: false,
         })
     );
 

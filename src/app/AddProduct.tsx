@@ -49,6 +49,30 @@ export default function AddProduct() {
         setAction((event.target as HTMLInputElement).value);
     };
 
+    const installData = (value: Product) => {
+        setId(value.id !== undefined ? String(value.id) : "");
+        setName(value.name ?? "");
+        if (value.coordinates !== undefined && value.coordinates !== null) {
+            setCoordinateX(value.coordinates.x !== undefined ? String(value.coordinates.x) : "");
+            setCoordinateY(value.coordinates.y !== undefined ? String(value.coordinates.y) : "");
+        }
+        setPrice(value.price !== undefined ? String(value.price) : "");
+        setPartNumber(value.partNumber ?? "");
+        setManufactureCost(value.manufactureCost !== undefined ? String(value.manufactureCost) : "");
+        setUnitOfMeasure(value.unitOfMeasure ?? "");
+        if (value.owner !== undefined && value.owner !== null) {
+            setOwnerName(value.owner.name ?? "");
+            setOwnerBirthday(value.owner.birthday !== undefined ? value.owner.birthday.slice(0, -10) : "");
+            setOwnerHeight(value.owner.height !== undefined ? String(value.owner.height) : "");
+            setOwnerPassportID(value.owner.passportID ?? "");
+            if (value.owner.location !== undefined && value.owner.location !== null) {
+                setLocationX(value.owner.location.x !== undefined ? String(value.owner.location.x) : "");
+                setLocationY(value.owner.location.y !== undefined ? String(value.owner.location.y) : "");
+                setLocationName(value.owner.location.name ?? "");
+            }
+        }
+    }
+
     const submitData = async (json?: string) => {
         try {
             await fetch(serverUrl + (action !== "add" ? `/${id !== "" ? id : "0"}` : ""), {
@@ -63,6 +87,7 @@ export default function AddProduct() {
                     const responseData = response.json();
                     responseData.then(value => {
                         setProductComponent(value as Product);
+                        installData(value);
                     })
                 } else {
                     const responseData = response.json();
@@ -178,30 +203,30 @@ export default function AddProduct() {
                     <Stack direction="row" spacing={4}>
                         <Stack spacing={3}>
                             Product
-                            <StandardTextField label="name" onChange={setName}/>
-                            <StandardTextField label="price" type={"number"} onChange={setPrice}/>
-                            <StandardTextField label="part number" onChange={setPartNumber}/>
-                            <StandardTextField label="manufacture cost" type={"number"} onChange={setManufactureCost}/>
-                            <StandardTextField label="unit of measure" onChange={setUnitOfMeasure}
+                            <StandardTextField value={name} label="name" onChange={setName}/>
+                            <StandardTextField value={price} label="price" type={"number"} onChange={setPrice}/>
+                            <StandardTextField value={partNumber} label="part number" onChange={setPartNumber}/>
+                            <StandardTextField value={manufactureCost} label="manufacture cost" type={"number"} onChange={setManufactureCost}/>
+                            <StandardTextField value={unitOfMeasure} label="unit of measure" onChange={setUnitOfMeasure}
                                                helperText="METERS, CENTIMETERS, MILLILITERS, GRAMS"/>
                         </Stack>
                         <Stack spacing={3}>
                             Coordinates
-                            <StandardTextField label="x" type={"number"} onChange={setCoordinateX}/>
-                            <StandardTextField label="y" type={"number"} onChange={setCoordinateY}/>
+                            <StandardTextField value={coordinateX} label="x" type={"number"} onChange={setCoordinateX}/>
+                            <StandardTextField value={coordinateY} label="y" type={"number"} onChange={setCoordinateY}/>
                         </Stack>
                         <Stack spacing={3}>
                             Owner
-                            <StandardTextField label="name" onChange={setOwnerName}/>
-                            <StandardTextField label="birthday" onChange={setOwnerBirthday} helperText="yyyy-mm-dd"/>
-                            <StandardTextField label="height" type={"number"} onChange={setOwnerHeight}/>
-                            <StandardTextField label="passport id" onChange={setOwnerPassportID}/>
+                            <StandardTextField value={ownerName} label="name" onChange={setOwnerName}/>
+                            <StandardTextField value={ownerBirthday} label="birthday" onChange={setOwnerBirthday} helperText="yyyy-mm-dd"/>
+                            <StandardTextField value={ownerHeight} label="height" type={"number"} onChange={setOwnerHeight}/>
+                            <StandardTextField value={ownerPassportID} label="passport id" onChange={setOwnerPassportID}/>
                         </Stack>
                         <Stack spacing={3}>
                             Owner`s location
-                            <StandardTextField label="x" type={"number"} onChange={setLocationX}/>
-                            <StandardTextField label="y" type={"number"} onChange={setLocationY}/>
-                            <StandardTextField label="name" onChange={setLocationName}/>
+                            <StandardTextField value={locationX} label="x" type={"number"} onChange={setLocationX}/>
+                            <StandardTextField value={locationY} label="y" type={"number"} onChange={setLocationY}/>
+                            <StandardTextField value={locationName} label="name" onChange={setLocationName}/>
                         </Stack>
                     </Stack>
                 )}
